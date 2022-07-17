@@ -16,7 +16,9 @@ import os
 Payload.max_decode_packets = 2048
 
 app = Flask(__name__)
-socketio = SocketIO(app,cors_allowed_origins='*' )
+app.secret_key = os.environ.get('SECRET')
+
+socketio = SocketIO(app)
 
 # app.config["UPLOAD_DIR"] = "/home/kumar/RachitVyom/ECA/ECA Using Socket/web-interface/images"
 
@@ -24,7 +26,7 @@ socketio = SocketIO(app,cors_allowed_origins='*' )
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
-    return render_template('index1.html')
+    return render_template('index.html')
 
 def readb64(base64_string):
     idx = base64_string.find('base64,')
@@ -168,4 +170,4 @@ def image(data_image):
         cnt=0
     
 if __name__ == '__main__':
-    socketio.run(app,port=5004 ,debug=True)
+    app.run()
