@@ -157,7 +157,7 @@ def image(data_image):
                 engagement = 'Not Engaged'
 
     # emit the frame back
-    emit('response_back', {'emotion':emotion, 'engagement':engagement})
+    emit('response_back', {'emotion':emotion, 'engagement':engagement, 'neutral':str(emotions_values['Neutral']), 'happy':str(emotions_values['Happiness']), 'sad':str(emotions_values['Sadness']), 'anger':str(emotions_values['Anger'])})
     
     fps = 1/(recv_time - prev_recv_time)
     fps_array.append(fps)
