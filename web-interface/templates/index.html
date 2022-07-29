@@ -30,9 +30,19 @@
 
     <div id="emotion">
     </div>
+    <div class="progress-bar" style="--width: 40" data-label=""></div>
+    <div class="progress-bar1" style="--width: 40" data-label=""></div>
+    <div class="progress-bar2" style="--width: 40" data-label=""></div>
+    <div class="progress-bar3" style="--width: 40" data-label=""></div>
+
 
     <script type="text/javascript" charset="utf-8">
-        var socket = io.connect('https://' + document.domain + ':' + location.port);
+        var neuVal = 0
+        var hapVal = 0
+        var sadVal = 0
+        var angVal = 0
+
+        var socket = io.connect(window.location.protocol + '//' + document.domain + ':' + location.port);
         socket.on('connect', function(){
             console.log("Connected...!", socket.connected)
         });
@@ -57,7 +67,12 @@
             });
         }
 
-        const FPS = 2;
+        const FPS = 5;
+        const progressBar = document.getElementsByClassName('progress-bar')[0]
+        const progressBar1 = document.getElementsByClassName('progress-bar1')[0]
+        const progressBar2 = document.getElementsByClassName('progress-bar2')[0]
+        const progressBar3 = document.getElementsByClassName('progress-bar3')[0]
+
         setInterval(() => {
             width=video.width;
             height=video.height;
@@ -65,11 +80,34 @@
             var data = canvas.toDataURL('image/jpeg', 0.5);
             context.clearRect(0, 0, width,height );
             socket.emit('image', data);
+
+            const computedStyle = getComputedStyle(progressBar)
+            const wiidth = parseFloat(computedStyle.getPropertyValue('--width')) || 0
+            progressBar.style.setProperty('--width', parseFloat(neuVal)*100)
+
+            const computedStyle1 = getComputedStyle(progressBar1)
+            const wiidth1 = parseFloat(computedStyle.getPropertyValue('--width')) || 0
+            progressBar1.style.setProperty('--width', parseFloat(hapVal)*100)
+
+            const computedStyle2 = getComputedStyle(progressBar2)
+            const wiidth2 = parseFloat(computedStyle.getPropertyValue('--width')) || 0
+            progressBar2.style.setProperty('--width', parseFloat(sadVal)*100)
+
+            const computedStyle3 = getComputedStyle(progressBar3)
+            const wiidth3 = parseFloat(computedStyle.getPropertyValue('--width')) || 0
+            progressBar3.style.setProperty('--width', parseFloat(angVal)*100)
         }, 1000/FPS);
 
         socket.on('response_back', function(result){
                 // console.log(result['emotion'], result['engagement']);
                 document.getElementById('emotion').innerHTML = "Emotion : " + result["emotion"] + " " + "Engagement : " + result["engagement"];
+                neuVal = result["neutral"]
+                hapVal = result["happy"]
+                sadVal = result["sad"]
+                angVal = result["anger"]
+                // const computedStyle = getComputedStyle(progressBar)
+            // const width = parseFloat(computedStyle.getPropertyValue('--width')) || 0
+            // progressBar.style.setProperty('--width', document.getElementById('neutral')*100)
                 
         });
 
@@ -79,4 +117,3 @@
  </body>
 
 </html>
-
